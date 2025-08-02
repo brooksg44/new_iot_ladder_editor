@@ -16,25 +16,34 @@
                      (str/join (repeat right-pad " ")))))))
 
 (defn render-element
-  "Render a single element with proper spacing"
-  [element width]
+  "Render a single element with proper spacing - FIXED"
+  [element]
   (let [name (:name element "")
         ascii (:ascii-art element "")
-        name-line (if (empty? name)
-                    (str/join (repeat width " "))
-                    (justify-text name width :center))
-        ascii-line (justify-text ascii width :center)]
-    [name-line ascii-line]))
+        ;; Use consistent width for better alignment
+        element-width (max 8 (count name))
+        ;; Justify name with spaces
+        name-line (justify-text name element-width :center)
+        ;; For ASCII art, just center it with dashes only if needed for connection
+        ascii-padding (max 0 (- element-width (count ascii)))
+        ascii-left-pad (int (/ ascii-padding 2))
+        ascii-right-pad (- ascii-padding ascii-left-pad)
+        ascii-line (str (str/join (repeat ascii-left-pad "─"))
+                        ascii
+                        (str/join (repeat ascii-right-pad "─")))]
+    {:name-line name-line
+     :ascii-line ascii-line
+     :width element-width}))
 
 (defn render-rung
-  "Render a rung as ASCII art"
+  "Render a rung as ASCII art - FIXED"
   [rung]
   (let [elements (:elements rung)]
     (if (empty? elements)
       ["" ""]
-      (let [element-renders (map #(render-element % (max 8 (count (:name % "")))) elements)
-            name-line (str/join "  " (map first element-renders))
-            ascii-line (str/join "──" (map second element-renders))]
+      (let [rendered-elements (map render-element elements)
+            name-line (str/join "  " (map :name-line rendered-elements))
+            ascii-line (str/join "──" (map :ascii-line rendered-elements))]
         [name-line ascii-line]))))
 
 (defn render-branch

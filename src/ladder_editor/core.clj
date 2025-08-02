@@ -3,11 +3,7 @@
   (:require [ladder-editor.ladder :as ladder]
             [ladder-editor.render :as render]
             [ladder-editor.converter :as converter]
-            
-            
             [clojure.pprint]))
-
-
 
 ;; Utility functions for REPL usage
 (defn quick-test
@@ -37,17 +33,39 @@
         (println (render/render-ladder (:result result))))
       (println "Error:" (:message result)))))
 
+(defn demo-ascii-rendering
+  "Demonstrate the correct ASCII rendering capabilities"
+  []
+  (println "=== New IOT Ladder Editor - ASCII Rendering Demo ===")
+  (println)
+
+  ;; Simple example
+  (println "=== Simple Two-Element Rung ===")
+  (let [simple-ladder (ladder/ladder
+                       (ladder/rung
+                        (ladder/normally-open-contact "Start")
+                        (ladder/normal-coil "Motor")))]
+    (println (render/render-ladder simple-ladder)))
+  (println)
+
+  ;; Complex example
+  (println "=== Three-Wire Control Example ===")
+  (let [three-wire (converter/create-three-wire-example)]
+    (println (render/render-ladder three-wire)))
+  (println))
 (defn -main
   "Main entry point"
   [& args]
   (if (some #{"--cli"} args)
     (do
       (println "=== New IOT Ladder Editor (CLI Mode) ===")
-      (println "Use (quick-test) or (test-il-conversion) in REPL")
-      (println "Running quick tests...")
+      (demo-ascii-rendering)
+      (println "\nRunning quick tests...")
       (quick-test)
-      (println "Running IL conversion test...")
-      (test-il-conversion))
+      (println "\nRunning IL conversion test...")
+      (test-il-conversion)
+      (println "\n=== REPL Functions Available ===")
+      (println "Use (quick-test) or (test-il-conversion) for more tests"))
     (do
       (println "Starting New IOT Ladder Editor GUI...")
       (try
@@ -60,6 +78,7 @@
           (println "This might be due to missing JavaFX. Try running in CLI mode with --cli")
           (System/exit 1))))))
 
+
 (comment
   ;; REPL usage examples
   
@@ -68,16 +87,16 @@
 
   ;; Test the nested maps approach
   (quick-test)
-  
+
   ;; Test IL conversion
   (test-il-conversion)
-  
+
   ;; Start GUI
   (ui/start-app)
-  
+
   ;; Stop GUI
   (ui/stop-app)
-  
+
   ;; Demo ASCII rendering
   (demo-ascii-rendering)
   :dbg
