@@ -79,4 +79,6 @@
   (ui/stop-app)
   
   ;; Demo ASCII rendering
-  (demo-ascii-rendering))
+  (demo-ascii-rendering)
+  :dbg
+  )
