@@ -8,7 +8,8 @@ echo ""
 
 # Create a simple Clojure script to test our implementation
 cat > test_implementation.clj << 'EOF'
-(require '[clojure.string :as str])
+(require '[clojure.string :as str]
+         '[clojure.pprint :as pprint])
 
 ;; Simplified version of our nested maps approach for testing
 (defn contact [name & {:keys [normally-closed?] :or {normally-closed? false}}]

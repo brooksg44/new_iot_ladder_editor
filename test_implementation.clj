@@ -1,4 +1,5 @@
-(require '[clojure.string :as str])
+(require '[clojure.string :as str]
+         '[clojure.pprint :as pprint])
 
 ;; Simplified version of our nested maps approach for testing
 (defn contact [name & {:keys [normally-closed?] :or {normally-closed? false}}]
