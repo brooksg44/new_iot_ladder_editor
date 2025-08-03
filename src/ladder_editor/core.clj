@@ -3,26 +3,11 @@
   (:require [ladder-editor.ladder :as ladder]
             [ladder-editor.render :as render]
             [ladder-editor.converter :as converter]
+            
+            
             [clojure.pprint]))
 
-(defn -main
-  "Main entry point"
-  [& args]
-  (if (some #{"--cli"} args)
-    (do
-      (println "=== New IOT Ladder Editor (CLI Mode) ===")
-      (println "Use (quick-test) or (test-il-conversion) in REPL"))
-    (do
-      (println "Starting New IOT Ladder Editor GUI...")
-      (try
-        ;; Dynamically require the UI namespace only when needed
-        (require '[ladder-editor.ui :as ui])
-        (let [start-app (resolve 'ladder-editor.ui/start-app)]
-          (start-app))
-        (catch Exception e
-          (println "Failed to start GUI:" (.getMessage e))
-          (println "This might be due to missing JavaFX. Try running in CLI mode with --cli")
-          (System/exit 1))))))
+
 
 ;; Utility functions for REPL usage
 (defn quick-test
@@ -30,7 +15,7 @@
   []
   (let [ladder-data (ladder/ladder
                      (ladder/rung
-                      (ladder/normally-open-contact "Input1")
+                      (ladder/normally-open-contact "Input1") 
                       (ladder/normally-closed-contact "Input2")
                       (ladder/normal-coil "Output1")))]
     (println "Nested Maps Structure:")
@@ -52,9 +37,35 @@
         (println (render/render-ladder (:result result))))
       (println "Error:" (:message result)))))
 
+(defn -main
+  "Main entry point"
+  [& args]
+  (if (some #{"--cli"} args)
+    (do
+      (println "=== New IOT Ladder Editor (CLI Mode) ===")
+      (println "Use (quick-test) or (test-il-conversion) in REPL")
+      (println "Running quick tests...")
+      (quick-test)
+      (println "Running IL conversion test...")
+      (test-il-conversion))
+    (do
+      (println "Starting New IOT Ladder Editor GUI...")
+      (try
+        ;; Dynamically require the UI namespace only when needed
+        (require '[ladder-editor.ui :as ui])
+        (let [start-app (resolve 'ladder-editor.ui/start-app)]
+          (start-app))
+        (catch Exception e
+          (println "Failed to start GUI:" (.getMessage e))
+          (println "This might be due to missing JavaFX. Try running in CLI mode with --cli")
+          (System/exit 1))))))
+
 (comment
   ;; REPL usage examples
   
+  ;; Load the necessary namespaces
+  (require '[ladder-editor.ui :as ui])
+
   ;; Test the nested maps approach
   (quick-test)
   
